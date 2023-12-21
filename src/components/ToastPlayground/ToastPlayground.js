@@ -3,35 +3,15 @@ import React from 'react';
 import Button from '../Button';
 
 import styles from './ToastPlayground.module.css';
-import Toast from '../Toast';
 import ToastShelf from '../ToastShelf';
+import { ToastContext } from '../ToastProvider/ToastProvider';
 
-const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
+export const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 
 function ToastPlayground() {
   const [message, setMessage] = React.useState('');
   const [variant, setVariant] = React.useState(VARIANT_OPTIONS[0]);
-  const [toasterMessages, setToasterMessages] = React.useState([]);
-
-  function addToasterMessage(e) {
-    e.preventDefault();
-    const newMessages = [
-      ...toasterMessages,
-      {
-        id: crypto.randomUUID(),
-        message: message,
-        variant: variant,
-      },
-    ];
-    setToasterMessages(newMessages);
-    setMessage("");
-    setVariant(VARIANT_OPTIONS[0]);
-  };
-
-  function removeToasterMessage(id) {
-    const newMessages = toasterMessages.filter((message) => message.id !== id);
-    setToasterMessages(newMessages);
-  }
+  const { addToasterMessage } = React.useContext(ToastContext);
 
   return (
     <div className={styles.wrapper}>
@@ -40,11 +20,16 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
 
-      <ToastShelf messages={toasterMessages} removeToaster={removeToasterMessage} />
+      <ToastShelf />
 
       <form
         className={styles.controlsWrapper}
-        onSubmit={addToasterMessage}  
+        onSubmit={(event) => {
+          event.preventDefault();
+          addToasterMessage(message, variant);
+          setMessage("");
+          setVariant(VARIANT_OPTIONS[0]);
+        }}
       >
         <div className={styles.row}>
           <label
