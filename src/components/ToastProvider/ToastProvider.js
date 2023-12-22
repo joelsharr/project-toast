@@ -6,6 +6,20 @@ export const ToastContext = React.createContext();
 function ToastProvider({ children }) {
   const [toasterMessages, setToasterMessages] = React.useState([]);
 
+  React.useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.code === 'Escape') {
+        setToasterMessages([]);
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    }
+  })
+
   function addToasterMessage(message, variant) {
     const newMessages = [
       ...toasterMessages,
