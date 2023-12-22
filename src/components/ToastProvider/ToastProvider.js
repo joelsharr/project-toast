@@ -1,24 +1,17 @@
 import React from 'react';
 import { VARIANT_OPTIONS } from '../ToastPlayground/ToastPlayground';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 export const ToastContext = React.createContext();
 
 function ToastProvider({ children }) {
   const [toasterMessages, setToasterMessages] = React.useState([]);
 
-  React.useEffect(() => {
-    function handleKeyDown(event) {
-      if (event.code === 'Escape') {
-        setToasterMessages([]);
-      }
-    }
+  const handleEscape = React.useCallback(() => {
+    setToasterMessages([]);
+  }, []);
 
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    }
-  })
+  useEscapeKey(handleEscape);
 
   function addToasterMessage(message, variant) {
     const newMessages = [
